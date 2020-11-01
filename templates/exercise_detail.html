@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+	<li class="breadcrumb-item" aria-current="page">
+	<a href="{% url 'books:book-list' %}">Book List</a>
+
+	</li>
+	<li class="breadcrumb-item" aria-current="page">
+		<a href="{{ exercise.chapter.book.get_absolute_url }}"> 
+		{{ exercise.chapter.book.title }}
+		 </a>
+	</li>
+	<li class="breadcrumb-item" aria-current="page">
+				<a href="{{ exercise.chapter.get_absolute_url }}"> 
+				{{ exercise.chapter.title }} 
+				</a>
+	</li>
+		<li class="breadcrumb-item active" aria-current="page">
+		 {{ exercise.title }} 
+	</li>
+    </ol>
+    </nav>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+<div class="row justify-content-md-center mt-4">
+    <main class="col-md-8">
+  {% include "book_snippet.html" with book=exercise.chapter.book %}
+  
+ </main>
+    <aside class="col-md-8">
+    <div class="card">
+        <div class="card-header">
+            Book
+        </div>
+
+            {% if exercise.chapter.book in request.user.userlibrary.book_list %}
+<!--- book_status == 'owned' -->
+            {% for solution in exercise.solution_set.all %}
+
+
+
+            <div class="accordion" id="toggle-{{ solution.solution_number }}">
+                <div class="card justify-content-md-center">
+                    <div class="card-header" id="heading-{{ solution.solution_number }}">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-{{ solution.solution_number }}" aria-expanded="true" aria-controls="collapse-{{ solution.solution_number }}">
+                        Chapter 
+                        </button>
+                    </h2>
+                    </div>
+
+
+                    <div id="collapse-{{ solution.solution_number }}" class="collapse" aria-labelledby="heading-{{ solution.solution_number }}" data-parent="#toggle-{{ solution.solution_number }}">
+                     <div class="card">
+                    <div class="card-body">
+                        <p><a class="btn btn-success" href="{{ solution.chapters.url }}">{{ solution.exercise }}</a></p> <!-- Ebook.ebook.url -->
+                    </div>
+                    </div>            
+                    </div>
+                      
+                </div>
+            </div>
+
+
+
+            {% endfor %}
+
+            {% else %}
+        <div class="text-center"> 
+            <a href="#">Purchase this book</a> to have access to the solutions
+            </h4>
+            <img class="justify-content-md-center" src="{%static 'images/land.svg' %}" />
+            {% endif %}
+        </div>
+    </div>
+    
+    </aside>
+	 
+</div>
+
+{% endblock content %}
